@@ -41,3 +41,104 @@ SyncShare is a Java-based peer-to-peer file-sharing application designed for sec
 mvn clean test
 mvn clean package
 ```
+
+
+
+## Starting SyncShare
+
+SyncShare shares files between computers connected to the same local network.
+
+### Requirements
+
+- JDK 21
+- Apache Maven
+- Both computers connected to the same Wi-Fi or LAN
+- TLS certificates configured on both computers
+
+Check Java and Maven:
+
+```bash
+java -version
+javac -version
+mvn --version
+```
+
+### TLS Setup
+
+Each computer needs these files inside the project folder:
+
+```text
+certs/
+├── identity.p12
+└── trusted-peers.p12
+```
+
+Each computer uses its own identity certificate. Exchange public certificates, verify their SHA-256 fingerprints, and import the other computer’s certificate into the local truststore.
+
+On each computer, use the same local password for `identity.p12` and `trusted-peers.p12`.
+
+### Run on Windows
+
+Open PowerShell in the project folder containing `pom.xml`.
+
+```powershell
+$pw = Read-Host "TLS keystore password" -AsSecureString
+$env:SYNCSHARE_TLS_PASSWORD = [System.Net.NetworkCredential]::new("", $pw).Password
+
+try {
+    mvn javafx:run
+}
+finally {
+    Remove-Item Env:SYNCSHARE_TLS_PASSWORD -ErrorAction SilentlyContinue
+}
+```
+
+Enter the password used to create that computer’s `identity.p12`.
+
+### Run on macOS
+
+Open the zsh terminal in the project folder containing `pom.xml`.
+
+```zsh
+read -s "SYNCSHARE_TLS_PASSWORD?TLS keystore password: "
+echo
+
+export SYNCSHARE_TLS_PASSWORD
+
+mvn javafx:run
+
+unset SYNCSHARE_TLS_PASSWORD
+```
+
+### Transfer a File
+
+1. Start SyncShare on both computers.
+2. On the receiving computer, click **Start Receiver**.
+3. On the sending computer, select a nearby device or enter the receiver’s IP address and listening port. The default port is `5050`.
+4. Click **Choose File**, select a file, and click **Send**.
+5. On the receiving computer, select the incoming request and click **Accept**.
+6. Watch the transfer status and check the received file in the configured receive folder.
+
+### Resume an Interrupted Transfer
+
+Restart the receiver using the same certificate and receive folder. Send the same file again and approve the request. SyncShare continues from the last valid saved checkpoint.
+
+### Run Tests
+
+Run the project tests:
+
+```bash
+mvn clean test
+```
+
+Run the TLS resume test on Windows:
+
+```powershell
+.\tools\test-resume.ps1
+```
+
+Run the TLS resume test on macOS:
+
+```bash
+bash tools/test-resume.sh
+```

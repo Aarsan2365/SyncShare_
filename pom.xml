@@ -16,7 +16,8 @@
     <maven.compiler.release>21</maven.compiler.release>
     <javafx.version>21.0.6</javafx.version>
     <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-    <javafx.mainClass>com.syncshare.ui.SyncShareApplication</javafx.mainClass>
+    <javafx.mainClass>com.syncshare.ui.SimpleSyncShare</javafx.mainClass>
+    
   </properties>
 
   <dependencyManagement>
