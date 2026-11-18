@@ -1,0 +1,11 @@
+certs/
+target/
+received_files/
+.DS_Store
+.vscode/
+.idea/
+*.class
+*.part
+*.key
+*.p12
+*.pfx
